@@ -48,7 +48,7 @@ async def roll_a_dice(ctx: discord.ApplicationContext):
     await ctx.respond(response)
 
 @bot.slash_command(description="Roll a custom dice")
-async def roll_custom_dice(ctx: discord.ApplicationContext, dices: str = commands.parameter(default="6", description="Amount of dices")):
+async def roll_custom_dice(ctx: discord.ApplicationContext, dices):
     try:
         dices = int(dices)
         if dices <= 1:
