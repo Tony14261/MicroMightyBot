@@ -69,17 +69,17 @@ async def roll_custom_dice(ctx: discord.ApplicationContext, dices):
 
 #====Guess the number====
 @bot.slash_command(description = "Guess the number from 1-10")
-def guess_the_number(ctx: discord.ApplicationContext, guess):
+async def guess_the_number(ctx: discord.ApplicationContext, guess):
     try:
         if not 0 < int(guess) < 11:
-            ctx.respond("Invalid guess. Must be a number from 1-10")
+            await ctx.respond("Invalid guess. Must be a number from 1-10")
         else:
             if random.randint(1,10) == int(guess):
-                ctx.respond("Correct!!")
+                await ctx.respond("Correct!!")
             else:
-                ctx.respond("Better luck next time lol")
+                await ctx.respond("Better luck next time lol")
     except ValueError:
-        ctx.respond("Invalid number")
+        await ctx.respond("Invalid number")
 #=====================================================
 
 
