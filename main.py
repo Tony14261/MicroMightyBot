@@ -14,7 +14,7 @@ server_thread = threading.Thread(target=start_http_server, daemon=True)
 server_thread.start()
 #==========================
 load_dotenv()
-#==========MongoDB setup==========
+#==========MongoDB (database)==========
 from pymongo.mongo_client import MongoClient  # noqa: E402
 
 uri = os.getenv('MONGODB_CONNECTION')
@@ -24,9 +24,16 @@ config_collection = client["configs"]["servers"]
 
 try:
     client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
+    print("Successfully connected to MonoDB!")
 except Exception as e:
     print(e)
+
+def write_to_config_simple(server_id: int, **kwargs) -> None:
+    data = {}
+    data[id] = server_id
+    for key, value in kwargs.items():
+        data[key] = value
+    config_collection.insert_one(data)
 
 #===========================================
 TOKEN = os.getenv('APP_TOKEN')
@@ -58,6 +65,21 @@ async def roll_custom_dice(ctx: discord.ApplicationContext, dices):
             await ctx.respond(response)
     except ValueError:
         await ctx.respond("Invalid number")
+#=====Skullboard=====
+
+#====Guess the number====
+@bot.slash_command(description = "Guess the number from 1-10")
+def guess_the_number(ctx: discord.ApplicationContext, guess):
+    try:
+        if not 0 < int(guess) < 11:
+            ctx.respond("Invalid guess. Must be a number from 1-10")
+        else:
+            if random.randint(1,10) == int(guess):
+                ctx.respond("Correct!!")
+            else:
+                ctx.respond("Better luck next time lol")
+    except ValueError:
+        ctx.respond("Invalid number")
 #=====================================================
 
 
@@ -66,9 +88,11 @@ async def roll_custom_dice(ctx: discord.ApplicationContext, dices):
 async def on_ready():
     time.sleep(0.5)
     print(f'"{bot.user.name}" is now ready!')
-    await bot.change_presence(activity=discord.Activity(application_id = 1300829284268507197,
-                                                        type=discord.ActivityType.watching,
-                                                        buttons=[{"label": "Open source", "url": "https://github.com/Tony14261/MicroMightyBot/"}, {"label": "Status", "url": "https://stats.uptimerobot.com/4CoTZy3oIe"}]))
+    activity = discord.Activity(name="`/help`",
+                                type=discord.ActivityType.listening,
+                                buttons=[{"label": "Open source", "url": "https://github.com/Tony14261/MicroMightyBot/"}, {"label": "Status", "url": "https://stats.uptimerobot.com/4CoTZy3oIe"}])
+    await bot.change_presence(status=discord.Status.online,
+                              activity=activity)
 
 @bot.event
 async def on_connect():
