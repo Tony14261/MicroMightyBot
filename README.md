@@ -21,7 +21,7 @@ The best thing is, I am maintaining this bot for completely free, using the abov
 ## 🛠️ Remix Guide
 - Warning: This project is under [CC-BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 ### Prerequisites
-- Python 3.11+ installed
+- Python 3.12+ installed
 - MongoDB Atlas connection string ([Get Started](https://www.mongodb.com/atlas/database))
 - Discord bot token ([Create Your Bot](https://discord.com/developers/applications))
 
