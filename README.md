@@ -65,8 +65,6 @@ Feel free to submit issues or suggest features. Contributions are always welcome
 This project is licensed under the [CC-BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ## 📞 Contact
-Discord user: tony14261
-
 Discord server: [Invite link](https://discord.gg/bJ8PaFREj2)
 
 If you encounter any issues or want to suggest a feature, feel free to message me. (Please don't use Github Issues page as I don't monitor it.)
