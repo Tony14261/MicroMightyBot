@@ -46,3 +46,27 @@ MONGO_URI=your_mongodb_connection_string
 ### 5. Set up bot on Render (for free)
 - Create a web service of the project
 - Start command: ```python main.py```
+
+## 🗂️ Project Structure
+```
+MicroMightyBot/
+├── .env                 # Environment variables
+├── LICENSE              # License file
+├── requirements.txt     # Project dependencies
+├── main.py              # Bot code
+├── status_web.py        # File for UptTimeRobot and web server
+└── README.md            # Project documentation
+```
+
+## 🌟 Contributing
+Feel free to submit issues or suggest features. Contributions are always welcome!
+
+## 📜 License
+This project is licensed under the [CC-BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+## 📞 Contact
+Discord user: tony14261
+
+Discord server: [Invite link](https://discord.gg/bJ8PaFREj2)
+
+If you encounter any issues or want to suggest a feature, feel free to message me. (Please don't use Github Issues page as I don't monitor it.)
