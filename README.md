@@ -47,6 +47,7 @@ MONGO_URI=your_mongodb_connection_string
 ### 5. Set up bot on Render (for free)
 - Create a web service of the project
 - Start command: ```python main.py```
+- Deploy it and.. done!
 
 ## 🗂️ Project Structure
 ```
