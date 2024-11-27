@@ -20,6 +20,7 @@ The best thing is, I am maintaining this bot for completely free, using the abov
 
 ## 🛠️ Remix Guide
 - Warning: This project is under [CC-BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- Btw, coding things take time and you must go through trial and error. So just patiently try to search stuffs in [pycord docs](https://docs.pycord.dev/en/stable/index.html) or [pymongo docs](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/) :)
 ### Prerequisites
 - Python 3.12+ installed
 - MongoDB Atlas connection string ([Get Started](https://www.mongodb.com/atlas/database))
