@@ -37,7 +37,7 @@ pip install -r requirements.txt
 ```
 
 ### 3. **Set up environment variables:** Create a `.env` file in the project directory:
-```python
+```env
 DISCORD_TOKEN=your_discord_bot_token
 MONGO_URI=your_mongodb_connection_string
 ```
