@@ -1,3 +1,7 @@
+# Code version: 1.3.0
+# Before saying that my code is bad, I want you to know I'm still a student and I would love to improve my Python skill. Please suggest things respectfully :)
+# Under CC-BY-NC-SA (https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
 import os
 import random
 import threading
@@ -7,33 +11,95 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
+from exceptions import InvalidMethod
+
 #==========Web server==========
 from status_web import start_http_server
 
 server_thread = threading.Thread(target=start_http_server, daemon=True)
 server_thread.start()
-#==========================
-load_dotenv()
+#==============================
+
+load_dotenv() #Load the .env file
+
 #==========MongoDB (database)==========
 from pymongo.mongo_client import MongoClient  # noqa: E402
 
 uri = os.getenv('MONGODB_CONNECTION')
 
 client = MongoClient(uri)
-config_collection = client["configs"]["servers"]
-
 try:
     client.admin.command('ping')
     print("Successfully connected to MonoDB!")
 except Exception as e:
     print(e)
 
-def write_to_config_simple(server_id: int, **kwargs) -> None:
+
+#The functions are made mainly for doing actions easier
+def write_to_db_one(server_id: str, collection: str, **kwargs) -> None:
+    """
+    Adds a data/document to the MongoDB
+    - server_id: str | The discord server ID
+    - collection: str | The name of the collection you want to add data to
+    - **kwargs | Data you want to add to the db
+    """
+    client_collection = client["data"][collection]
     data = {}
-    data[id] = server_id
+    data["_id"] = server_id
     for key, value in kwargs.items():
         data[key] = value
-    config_collection.insert_one(data)
+    client_collection.insert_one(data)
+def update_db_one(server_id: str, collection: str, bkeys: str=None, upsert: bool = True, method = "set", **kwargs) -> None:
+    """
+    Updata a data (in a document) in the MongoDB
+    - `server_id`: str | The discord server ID
+    - `collection`: str | The collection you want to connect
+    - `bkeys`: str | More advanced. The keys you want to access before changing the value (read example below)
+        - Example:
+            - For example you data is like: ```{message: {content: "Hello", count2: 4, logs :{message_count: 1}}}```
+            - So to update the *message_count* by 1, set `bkeys = message.logs`  `method = "inc"`  `message_count = 1`
+            - To update *count2* by 1, set `bhkeys = message` `method = "inc"` `count2 = 1`
+            - More info: https://www.mongodb.com/docs/manual/core/document/#dot-notation
+    - `upsert`: bool | Whether you want to use upsert for the commend (adds a new value when not found)
+        - Default value: True
+    - `method`: str | The method you want to use
+        - Default value: "set"
+        - Only accepts "set" and "inc" (inc use below in "How to make your value add n")
+        - "set": Set your key to a value 
+        - "inc": Make you value add/subtract. More information: https://www.mongodb.com/docs/manual/reference/operator/update/inc/#behavior
+    
+    How to make your value add `n`:
+    - Set `method = "inc"`
+    - `your_key = n` 
+        - *your_key* is the key you want to update
+        - *n* is number you want your value to increase
+        - Basically, it will be like `your_key += n`
+    """
+    client_collection = client["data"][collection]
+    data = {}
+    for key, value in kwargs.items():
+        if bkeys is not None:
+            data[f"{bkeys}.{key}"] = value
+        else:
+            data[key] = value
+    if not (method == "set" or method == "inc"):
+        raise InvalidMethod
+    try:
+        client_collection.update_one({'_id':server_id}, {f"${method}": data}, upsert=upsert)
+    except Exception as e:
+        raise(e)
+def get_data(server_id: str, collection: str):
+    """
+    Returns the whole document that has the `_id = server_id` (dictionary type)
+    """
+    client_collection = client["data"][collection]
+    return client_collection.find_one({"_id": server_id})
+def delete_data_one(server_id : str, collection: str) -> None:
+    """
+    Deletes the whole document that has the `_id = server_id`
+    """
+    client_collection = client["data"][collection]
+    client_collection.delete_one({"_id": server_id})
 
 #===========================================
 TOKEN = os.getenv('APP_TOKEN')
@@ -88,7 +154,7 @@ async def guess_the_number(ctx: discord.ApplicationContext, guess):
 async def on_ready():
     time.sleep(0.5)
     print(f'"{bot.user.name}" is now ready!')
-    activity = discord.Activity(name="`/help`",
+    activity = discord.Activity(name="/help",
                                 type=discord.ActivityType.listening,
                                 buttons=[{"label": "Open source", "url": "https://github.com/Tony14261/MicroMightyBot/"}, {"label": "Status", "url": "https://stats.uptimerobot.com/4CoTZy3oIe"}])
     await bot.change_presence(status=discord.Status.online,
@@ -103,6 +169,14 @@ async def on_connect():
         print(f"Failed to sync commands: {e}")
 
 #==========================
+
+#==========The Hood exclusive features==========
+@bot.event
+async def on_message(message: discord.Message):
+    if message.guild.id == 1303613693707288617:
+        update_db_one(server_id=str(message.guild.id), collection="message_count", method = "inc", upsert=True, count = 1)
+
+#===============================================
 
 #=================================================================================================================================
 
