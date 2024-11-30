@@ -1,7 +1,7 @@
 # MicroMightyBot
 
 MicroMightyBot is a lightweight Discord bot packed with small, kinda-useless features designed to make you server more entertaining.
-
+Version: 1.3.0
 [Invite link](https://discord.com/oauth2/authorize?client_id=1300829284268507197)
 
 ---
@@ -10,6 +10,8 @@ MicroMightyBot is a lightweight Discord bot packed with small, kinda-useless fea
 - **/roll_a_dice**: Rolls a dice (outputs a random number from 1-6)
 - **/roll_custom_dice**: Rolls a custom dice (outputs a random number from a custom range)
 - **/guess_the_number**: Guess the number from 1-10 (see if user's input is the same as the bot's random number)
+
+## ⭐ Newest features
 
 ## 📚 Programs Used 
 - **Language**: [Python 3.12+](https://www.python.org/)
@@ -55,8 +57,10 @@ MicroMightyBot/
 ├── .env                 # Environment variables
 ├── LICENSE              # License file
 ├── requirements.txt     # Project dependencies
+├── changelog.md         # Change log file
 ├── main.py              # Bot code
-├── status_web.py        # File for UptTimeRobot and web server
+├── exceptions.py        # File to store the bot's custom exceptions
+├── status_web.py        # File for UpTimeRobot and web server
 └── README.md            # Project documentation
 ```
 

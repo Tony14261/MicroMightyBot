@@ -1,4 +1,4 @@
-# Code version: 1.3.0
+# Version: 1.3.0
 # Before saying that my code is bad, I want you to know I'm still a student and I would love to improve my Python skill. Please suggest things respectfully :)
 # Under CC-BY-NC-SA (https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
@@ -171,10 +171,15 @@ async def on_connect():
 #==========================
 
 #==========The Hood exclusive features==========
+# I might make these features public in the future.
+staffs = [357638580530708480, 1254854714743455754, 1296457844140539954, 973091747418755092]
+
 @bot.event
 async def on_message(message: discord.Message):
     if message.guild.id == 1303613693707288617:
-        update_db_one(server_id=str(message.guild.id), collection="message_count", method = "inc", upsert=True, count = 1)
+        if int(message.author.id) in staffs:
+            update_db_one(server_id=str(message.guild.id), collection="message_count", bkeys="count", method="set", user_id = str(message.author.id))
+            update_db_one(server_id=str(message.guild.id), collection="message_count", bkeys="count", method="inc", icount = 1)
 
 #===============================================
 
