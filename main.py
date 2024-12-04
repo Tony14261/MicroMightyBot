@@ -205,9 +205,9 @@ async def staff_message_count(ctx: discord.ApplicationContext):
             # Append to the output string
             response += f"<@{user_id}>Sent `{count}` messages\n"
         response.strip()
-        ctx.respond(response)
+        await ctx.respond(response)
     else:
-        ctx.respond("Sorry, as our server and database has limited resources, we can't make this feature available for every server. \nIf you know Python, I recommend you forking the bot at make it yours (github in about me).")
+        await ctx.respond("Sorry, as our server and database has limited resources, we can't make this feature available for every server. \nIf you know Python, I recommend you forking the bot at make it yours (github in about me).")
 
 #===============================================
 
