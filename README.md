@@ -42,7 +42,13 @@ pip install -r requirements.txt
 ```env
 DISCORD_TOKEN=your_discord_bot_token
 MONGO_URI=your_mongodb_connection_string
+PORT = 8000
 ```
+If you are using render, add 
+```env
+PYTHON_VERSION = 3.12
+```
+to specify the Python version you want
 
 ### 4. Modify the code:
 - Change the code to your style. Maybe add some features, improve the code, fix bugs,...
