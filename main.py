@@ -159,6 +159,7 @@ async def on_ready():
                                 buttons=[{"label": "Open source", "url": "https://github.com/Tony14261/MicroMightyBot/"}, {"label": "Status", "url": "https://stats.uptimerobot.com/4CoTZy3oIe"}])
     await bot.change_presence(status=discord.Status.online,
                               activity=activity)
+    await bot.register_command(staff_message_count, guild_ids=[1303613693707288617])
 
 @bot.event
 async def on_connect():
@@ -178,8 +179,32 @@ staffs = [357638580530708480, 1254854714743455754, 1296457844140539954, 97309174
 async def on_message(message: discord.Message):
     if message.guild.id == 1303613693707288617:
         if int(message.author.id) in staffs:
-            update_db_one(server_id=str(message.guild.id), collection="message_count", bkeys="count", method="set", user_id = str(message.author.id))
-            update_db_one(server_id=str(message.guild.id), collection="message_count", bkeys="count", method="inc", icount = 1)
+            srv_id = str(message.guild.id)
+            usr_id = str(message.author.id)
+
+            update_db_one(server_id=srv_id, collection="message_count", upsert=True, method="inc", iu = 1)
+            i = get_data(server_id=srv_id, collection="message_count")["iu"]
+
+            client_collection = client["data"]["message_count"]
+            data = {}
+            data[f"user{str(i)}.user_id"] = usr_id
+            client_collection.update_one({'_id':srv_id}, {"$set": data}, upsert=True)
+
+            data = {}
+            data[f"user{str(i)}.count"] = 1
+            client_collection.update_one({'_id':srv_id}, {"$inc": data}, upsert=True)
+
+@bot.slash_command(description = "See how many messages the staffs sent")
+async def staff_message_count(ctx: discord.ApplicationContext):
+    data = get_data(server_id=str(ctx.guild_id), collection="message_count")
+    response = ""
+    for user, details in data.items():
+        user_id = details["user_id"]
+        count = details["count"]
+        # Append to the output string
+        response += f"<@{user_id}>Sent `{count}` messages\n"
+    response.strip()
+    ctx.respond(response)
 
 #===============================================
 
@@ -189,4 +214,4 @@ def main():
     bot.run(TOKEN)
 
 if __name__ == '__main__':
-    main()
+    main()  
