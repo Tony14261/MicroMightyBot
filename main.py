@@ -159,7 +159,7 @@ async def on_ready():
                                 buttons=[{"label": "Open source", "url": "https://github.com/Tony14261/MicroMightyBot/"}, {"label": "Status", "url": "https://stats.uptimerobot.com/4CoTZy3oIe"}])
     await bot.change_presence(status=discord.Status.online,
                               activity=activity)
-    await bot.register_command(staff_message_count, guild_ids=[1303613693707288617])
+    #await bot.register_command(staff_message_count, guild_ids=[1303613693707288617])
 
 @bot.event
 async def on_connect():
@@ -196,15 +196,18 @@ async def on_message(message: discord.Message):
 
 @bot.slash_command(description = "See how many messages the staffs sent")
 async def staff_message_count(ctx: discord.ApplicationContext):
-    data = get_data(server_id=str(ctx.guild_id), collection="message_count")
-    response = ""
-    for user, details in data.items():
-        user_id = details["user_id"]
-        count = details["count"]
-        # Append to the output string
-        response += f"<@{user_id}>Sent `{count}` messages\n"
-    response.strip()
-    ctx.respond(response)
+    if str(ctx.guild_id) == "1303613693707288617":
+        data = get_data(server_id=str(ctx.guild_id), collection="message_count")
+        response = ""
+        for user, details in data.items():
+            user_id = details["user_id"]
+            count = details["count"]
+            # Append to the output string
+            response += f"<@{user_id}>Sent `{count}` messages\n"
+        response.strip()
+        ctx.respond(response)
+    else:
+        ctx.respond("Sorry, as our server and database has limited resources, we can't make this feature available for every server. \nIf you know Python, I recommend you forking the bot at make it yours (github in about me).")
 
 #===============================================
 
