@@ -1,4 +1,5 @@
-#For the hosting
+# Last updated: v1.3.1
+# For the hosting
 
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -13,7 +14,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.end_headers()
-        self.wfile.write(b'Server "Skullboard" is online!')
+        self.wfile.write(b'Server "MicroMightyBot" is online!')
 
 def start_http_server():
     server_address = ('', int(os.getenv("PORT")))

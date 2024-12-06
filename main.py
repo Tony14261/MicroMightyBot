@@ -1,4 +1,3 @@
-# Version: 1.3.0
 # Before saying that my code is bad, I want you to know I'm still a student and I would love to improve my Python skill. Please suggest things respectfully :)
 # Under CC-BY-NC-SA (https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
@@ -182,16 +181,9 @@ async def on_message(message: discord.Message):
             srv_id = str(message.guild.id)
             usr_id = str(message.author.id)
 
-            update_db_one(server_id=srv_id, collection="message_count", upsert=True, method="inc", iu = 1)
-            i = get_data(server_id=srv_id, collection="message_count")["iu"]
-
             client_collection = client["data"]["message_count"]
             data = {}
-            data[f"user{str(i)}.user_id"] = usr_id
-            client_collection.update_one({'_id':srv_id}, {"$set": data}, upsert=True)
-
-            data = {}
-            data[f"user{str(i)}.count"] = 1
+            data[f"{usr_id}"] = 1
             client_collection.update_one({'_id':srv_id}, {"$inc": data}, upsert=True)
 
 @bot.slash_command(description = "See how many messages the staffs sent")
@@ -199,11 +191,8 @@ async def staff_message_count(ctx: discord.ApplicationContext):
     if str(ctx.guild_id) == "1303613693707288617":
         data = get_data(server_id=str(ctx.guild_id), collection="message_count")
         response = ""
-        for user, details in data.items():
-            user_id = details["user_id"]
-            count = details["count"]
-            # Append to the output string
-            response += f"<@{user_id}>Sent `{count}` messages\n"
+        for user_id, count in data.items():
+            response += f"<@{user_id}> Sent `{count}` messages\n"
         response.strip()
         await ctx.respond(response)
     else:

@@ -1,7 +1,9 @@
+# v1.3.1 | Release
+- Fix some small, important bugs
 # v1.3.0 | Release
 - Update & fix the MongoDB functions
 - Add custom exceptions for my code
-- Fix a small bug in the functions
+- Fix a small bug in the MongoDB functions
 - New slash commend (exclusive feature, only available for 1 of my server): `/staff_message_count`, returns how many messages the staffs sent in the past week
 # v1.2.0 | Release
 - Add MongoDB functions (to help people that remix the project)
