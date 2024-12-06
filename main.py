@@ -191,10 +191,15 @@ async def staff_message_count(ctx: discord.ApplicationContext):
     if str(ctx.guild_id) == "1303613693707288617":
         data = get_data(server_id=str(ctx.guild_id), collection="message_count")
         response = ""
-        for user_id, count in data.items():
-            response += f"<@{user_id}> Sent `{count}` messages\n"
-        response.strip()
-        await ctx.respond(response)
+        try:
+            for user_id, count in data.items():
+                if user_id == "_id":
+                    continue
+                response += f"<@{user_id}> Sent `{count}` messages\n"
+            response.strip()
+            await ctx.respond(response)
+        except AttributeError:
+            await ctx.respond("No data found")
     else:
         await ctx.respond("Sorry, as our server and database has limited resources, we can't make this feature available for every server. \nIf you know Python, I recommend you forking the bot at make it yours (github in about me).")
 
