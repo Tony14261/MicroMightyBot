@@ -172,7 +172,7 @@ async def on_connect():
 
 #==========The Hood exclusive features==========
 # I might make these features public in the future.
-staffs = [357638580530708480, 1254854714743455754, 1296457844140539954, 973091747418755092]
+staffs = [357638580530708480, 1254854714743455754, 1296457844140539954, 973091747418755092, 1308749029584273438]
 
 @bot.event
 async def on_message(message: discord.Message):
