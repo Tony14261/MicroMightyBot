@@ -170,9 +170,9 @@ async def on_connect():
 
 #==========================
 
-#==========The Hood exclusive features==========
-# I might make these features public in the future.
-staffs = [357638580530708480, 1254854714743455754, 1296457844140539954, 973091747418755092, 1308749029584273438]
+#==========Optional Features==========
+# I will make these features public in the future.
+staffs = [357638580530708480, 1254854714743455754, 1296457844140539954, 973091747418755092, 1307083823380693075]
 
 @bot.event
 async def on_message(message: discord.Message):
@@ -189,19 +189,22 @@ async def on_message(message: discord.Message):
 @bot.slash_command(description = "See how many messages the staffs sent")
 async def staff_message_count(ctx: discord.ApplicationContext):
     if str(ctx.guild_id) == "1303613693707288617":
-        data = get_data(server_id=str(ctx.guild_id), collection="message_count")
-        response = ""
-        try:
-            for user_id, count in data.items():
-                if user_id == "_id":
-                    continue
-                response += f"<@{user_id}> Sent `{count}` messages\n"
-            response.strip()
-            await ctx.respond(response)
-        except AttributeError:
-            await ctx.respond("No data found")
+        if ctx.author.guild_permissions.mention_everyone:
+            data = get_data(server_id=str(ctx.guild_id), collection="message_count")
+            response = ""
+            try:
+                for user_id, count in data.items():
+                    if user_id == "_id":
+                        continue
+                    response += f"> <@{user_id}> Sent `{count}` messages\n"
+                response.strip()
+                await ctx.respond(response)
+            except AttributeError:
+                await ctx.respond("No data found")
+        else:
+            await ctx.respond("You don't have the `Mention @everyone, @here, and All Rolls` to run this command.")
     else:
-        await ctx.respond("Sorry, as our server and database has limited resources, we can't make this feature available for every server. \nIf you know Python, I recommend you forking the bot at make it yours (github in about me).")
+        await ctx.respond("Sorry, as our server and database has limited resources, we can't make this feature available for every server. \nIf you know Python, I recommend you forking the bot at making it yours (github in about me).")
 
 #===============================================
 
