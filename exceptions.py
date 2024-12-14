@@ -1,5 +1,3 @@
-# Last updated: v1.3.0
-
 class InvalidMethod(Exception):
     """
     Raised when the input method of a function is invalid

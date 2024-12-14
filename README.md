@@ -11,7 +11,9 @@ Version: 1.3.0
 - **/roll_custom_dice**: Rolls a custom dice (outputs a random number from a custom range)
 - **/guess_the_number**: Guess the number from 1-10 (see if user's input is the same as the bot's random number)
 
-## ⭐ Newest features
+## ⭐ Upcoming Features
+- **/staff_message_count** will be available for public (its features will be announced then)
+- Turn features on/off with slash commands
 
 ## 📚 Programs Used 
 - **Language**: [Python 3.12+](https://www.python.org/)

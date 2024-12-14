@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from exceptions import InvalidMethod
+from exceptions import *
 
 #==========Web server==========
 from status_web import start_http_server
@@ -187,22 +187,24 @@ async def on_message(message: discord.Message):
             client_collection.update_one({'_id':srv_id}, {"$inc": data}, upsert=True)
 
 @bot.slash_command(description = "See how many messages the staffs sent")
+@discord.default_permissions(
+    mention_everyone = True,
+)
 async def staff_message_count(ctx: discord.ApplicationContext):
     if str(ctx.guild_id) == "1303613693707288617":
-        if ctx.author.guild_permissions.mention_everyone:
-            data = get_data(server_id=str(ctx.guild_id), collection="message_count")
-            response = ""
-            try:
-                for user_id, count in data.items():
-                    if user_id == "_id":
-                        continue
-                    response += f"> <@{user_id}> Sent `{count}` messages\n"
-                response.strip()
-                await ctx.respond(response)
-            except AttributeError:
-                await ctx.respond("No data found")
+        data = get_data(server_id=str(ctx.guild_id), collection="message_count")
+        response = ""
+        try:
+            for user_id, count in data.items():
+                if user_id == "_id":
+                    continue
+                response += f"> <@{user_id}> Sent `{count}` messages\n"
+            response.strip()
+            await ctx.respond(response)
+        except AttributeError:
+            await ctx.respond("No data found. Please report this in our support server if you believe this is a bug. https://discord.gg/bJ8PaFREj2")
         else:
-            await ctx.respond("You don't have the `Mention @everyone, @here, and All Rolls` to run this command.")
+            raise
     else:
         await ctx.respond("Sorry, as our server and database has limited resources, we can't make this feature available for every server. \nIf you know Python, I recommend you forking the bot at making it yours (github in about me).")
 
