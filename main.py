@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from exceptions import *
+from exceptions import InvalidMethod, UnknownError
 
 #==========Web server==========
 from status_web import start_http_server
@@ -204,7 +204,7 @@ async def staff_message_count(ctx: discord.ApplicationContext):
         except AttributeError:
             await ctx.respond("No data found. Please report this in our support server if you believe this is a bug. https://discord.gg/bJ8PaFREj2")
         else:
-            raise
+            raise UnknownError
     else:
         await ctx.respond("Sorry, as our server and database has limited resources, we can't make this feature available for every server. \nIf you know Python, I recommend you forking the bot at making it yours (github in about me).")
 
