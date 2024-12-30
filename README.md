@@ -12,7 +12,7 @@ Version: 1.3.0
 - **/guess_the_number**: Guess the number from 1-10 (see if user's input is the same as the bot's random number)
 
 ## ⭐ Upcoming Features
-- **/staff_message_count** will be available for public (its features will be announced then)
+- Many features relating to tracking messages
 - Turn features on/off with slash commands
 
 ## 📚 Programs Used 
