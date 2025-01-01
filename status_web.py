@@ -1,4 +1,3 @@
-# Last updated: v1.3.1
 # For the hosting
 
 import os

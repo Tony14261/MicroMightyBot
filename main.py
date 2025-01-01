@@ -1,4 +1,4 @@
-# Before saying that my code is bad, I want you to know I'm still a student and I would love to improve my Python skill. Please suggest things respectfully :)
+# Please suggest and give feedbacks respectfully :)
 # Under CC-BY-NC-SA (https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 import os
@@ -7,6 +7,7 @@ import threading
 import time
 
 import discord
+from discord.commands import option
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -120,7 +121,12 @@ async def roll_a_dice(ctx: discord.ApplicationContext):
     await ctx.respond(response)
 
 @bot.slash_command(description="Roll a custom dice")
-async def roll_custom_dice(ctx: discord.ApplicationContext, dices):
+@option(
+    "dices",
+    description="The amount of dices you want to roll",
+    required=True,
+)
+async def roll_custom_dice(ctx: discord.ApplicationContext, dices: int):
     try:
         dices = int(dices)
         if dices <= 1:
@@ -134,7 +140,12 @@ async def roll_custom_dice(ctx: discord.ApplicationContext, dices):
 
 #====Guess the number====
 @bot.slash_command(description = "Guess the number from 1-10")
-async def guess_the_number(ctx: discord.ApplicationContext, guess):
+@option(
+    "guess",
+    description="Write your guess",
+    required=True,
+)
+async def guess_the_number(ctx: discord.ApplicationContext, guess: int):
     try:
         if not 0 < int(guess) < 11:
             await ctx.respond("Invalid guess. Must be a number from 1-10")
@@ -171,7 +182,8 @@ async def on_connect():
 #==========================
 
 #==========Optional Features==========
-# I will make these features public in the future.
+#===Message Count===
+# I am working to make these features available for everyone
 staffs = [357638580530708480, 1254854714743455754, 1296457844140539954, 973091747418755092, 1307083823380693075]
 
 @bot.event
@@ -186,11 +198,36 @@ async def on_message(message: discord.Message):
             data[f"{usr_id}"] = 1
             client_collection.update_one({'_id':srv_id}, {"$inc": data}, upsert=True)
 
-@bot.slash_command(description = "See how many messages the staffs sent")
+msgcount = discord.SlashCommandGroup(name="msgcount", description="Command group for the message count feature")
+#----------
+@msgcount.command(description = "What's the message count feature works and how to set it up")
+async def guide(ctx: discord.ApplicationContext):
+    await ctx.respond("""## About the message count feature\n
+                    The message count feature is a feature that counts how many messages a user has sent in the server. It's a simple feature that can be useful for some servers.\n
+                    Because of the limited resources, you are limited to track maximum of 10 users. This feature will also be off by default and need configuration.\n
+                         ## How to set it up\n
+                    You could use the `/msgcount toggle` command to toggle the feature. The slash command requires inputs of users you want to track (10 maximum).\n
+                    The bot will start tracking then
+                         ## Commands:
+                      - `/msgcount toggle` - Toggle the message count feature, requires Administrator permission
+                      - `/msgcount get` - See how many messages members sent, requires Mention Everyone permission
+                      - `/msgcount delete` - Delete the message count data of your server, requires Administrator permission
+                      """)
+#----------
+@msgcount.command(description = "Toggle the message count feature")
+@discord.default_permissions(
+    administrator = True,
+    contexts={discord.InteractionContextType.guild},
+)
+async def toggle(ctx: discord.ApplicationContext):
+    await ctx.respond("Command not available yet")
+#----------
+@msgcount.command(description = "See how many messages members sent")
 @discord.default_permissions(
     mention_everyone = True,
+    contexts={discord.InteractionContextType.guild},
 )
-async def staff_message_count(ctx: discord.ApplicationContext):
+async def get(ctx: discord.ApplicationContext):
     if str(ctx.guild_id) == "1303613693707288617":
         data = get_data(server_id=str(ctx.guild_id), collection="message_count")
         response = ""
@@ -202,12 +239,36 @@ async def staff_message_count(ctx: discord.ApplicationContext):
             response.strip()
             await ctx.respond(response)
         except AttributeError:
-            await ctx.respond("No data found. Please report this in our support server if you believe this is a bug. https://discord.gg/bJ8PaFREj2")
+            await ctx.respond("No data found.")
         else:
             raise UnknownError
     else:
-        await ctx.respond("Sorry, as our server and database has limited resources, we can't make this feature available for every server. \nIf you know Python, I recommend you forking the bot at making it yours (github in about me).")
-
+        await ctx.respond("This feature is not available for everyone yet.")
+#----------
+@msgcount.command(description = "Delete the message count data of your server",
+                  contexts={discord.InteractionContextType.guild},
+                  )
+@discord.default_permissions(
+    administrator = True,
+)
+async def delete(ctx: discord.ApplicationContext):
+    write_to_db_one(server_id=str(ctx.guild_id), collection="message_count", confirm = str(ctx.author.id))
+    await ctx.respond(f"Dm <@{str(bot.user.id)}> : `/msgcount confirm_deletion {str(ctx.guild_id)}` to confirm the deletion\nor `/msgcount cancel_deletion {str(ctx.guild_id)}` to cancel the deletion")
+#----------
+@msgcount.command(description = "Confirm the deletion of the message count data of your server",
+                  contexts={discord.InteractionContextType.bot_dm},
+                  )
+@discord.option(
+    "server_id",
+    description="The server ID",
+    required=True,
+)
+async def confirm_deletion(ctx: discord.ApplicationContext, server_id: int):
+    if str(ctx.author.id) == get_data(server_id=str(server_id), collection="message_count")["confirm"]:
+        delete_data_one(server_id=str(server_id), collection="message_count")
+        await ctx.respond("Data deleted")
+    else:
+        await ctx.respond("You are not authorized to delete the data. If you have permission, try doing `/msgcount delete` in your server.")
 #===============================================
 
 #=================================================================================================================================

@@ -1,19 +1,20 @@
 # MicroMightyBot
 
-MicroMightyBot is a lightweight Discord bot packed with small, kinda-useless features designed to make you server more entertaining.
-Version: 1.3.0
+MicroMightyBot is a lightweight Discord bot packed with small, kinda-useless features designed to make your server more entertaining and productive. \
+Version: 1.3.0 \
 [Invite link](https://discord.com/oauth2/authorize?client_id=1300829284268507197)
 
 ---
 
 ## ✨ Features
+> Look in [changelog.md](https://github.com/Tony14261/MicroMightyBot/blob/main/changelog.md) to keep up with the latest
 - **/roll_a_dice**: Rolls a dice (outputs a random number from 1-6)
 - **/roll_custom_dice**: Rolls a custom dice (outputs a random number from a custom range)
 - **/guess_the_number**: Guess the number from 1-10 (see if user's input is the same as the bot's random number)
 
 ## ⭐ Upcoming Features
-- Many features relating to tracking messages
-- Turn features on/off with slash commands
+- **/msgcount** Features to track number of messages members sent
+- **/help** Yes, it isn't made yet
 
 ## 📚 Programs Used 
 - **Language**: [Python 3.12+](https://www.python.org/)
@@ -79,6 +80,5 @@ Feel free to submit issues or suggest features. Contributions are always welcome
 This project is licensed under the [CC-BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ## 📞 Contact
-Discord server: [Invite link](https://discord.gg/bJ8PaFREj2)
-
+Discord server: [Invite link](https://discord.gg/bJ8PaFREj2) \
 If you encounter any issues or want to suggest a feature, feel free to message me. (Please don't use Github Issues page as I don't monitor it.)
