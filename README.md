@@ -1,6 +1,6 @@
 # MicroMightyBot
 
-MicroMightyBot is a lightweight Discord bot packed with small, kinda-useless features designed to make your server more entertaining and productive. 
+MicroMightyBot is a lightweight Discord bot packed with small, kinda-useless features designed to make your server more entertaining and productive. \
 
 Version: 1.3.0 \
 [Invite link](https://discord.com/oauth2/authorize?client_id=1300829284268507197)
