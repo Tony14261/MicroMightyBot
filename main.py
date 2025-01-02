@@ -214,18 +214,18 @@ async def guide(ctx: discord.ApplicationContext):
                       - `/msgcount delete` - Delete the message count data of your server, requires Administrator permission
                       """)
 #----------
-@msgcount.command(description = "Toggle the message count feature")
+@msgcount.command(description = "Toggle the message count feature",
+                  contexts={discord.InteractionContextType.guild},)
 @discord.default_permissions(
     administrator = True,
-    contexts={discord.InteractionContextType.guild},
 )
 async def toggle(ctx: discord.ApplicationContext):
     await ctx.respond("Command not available yet")
 #----------
-@msgcount.command(description = "See how many messages members sent")
+@msgcount.command(description = "See how many messages members sent",
+                  contexts={discord.InteractionContextType.guild},)
 @discord.default_permissions(
     mention_everyone = True,
-    contexts={discord.InteractionContextType.guild},
 )
 async def get(ctx: discord.ApplicationContext):
     if str(ctx.guild_id) == "1303613693707288617":
@@ -247,7 +247,7 @@ async def get(ctx: discord.ApplicationContext):
 #----------
 @msgcount.command(description = "Delete the message count data of your server",
                   contexts={discord.InteractionContextType.guild},
-                  )
+)
 @discord.default_permissions(
     administrator = True,
 )
@@ -257,7 +257,7 @@ async def delete(ctx: discord.ApplicationContext):
 #----------
 @msgcount.command(description = "Confirm the deletion of the message count data of your server",
                   contexts={discord.InteractionContextType.bot_dm},
-                  )
+)
 @discord.option(
     "server_id",
     description="The server ID",
