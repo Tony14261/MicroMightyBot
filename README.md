@@ -50,7 +50,7 @@ PORT = 8000
 ```
 If you are using render, add 
 ```env
-PYTHON_VERSION = 3.12
+PYTHON_VERSION = 3.11.10
 ```
 to specify the Python version you want
 
