@@ -8,8 +8,7 @@ import time
 
 import discord
 from discord.commands import option
-
-#from discord.ext import commands
+from discord.ext import commands
 from dotenv import load_dotenv
 
 from exceptions import InvalidMethod, UnknownError
@@ -109,7 +108,7 @@ intents = discord.Intents()
 intents.messages = True
 intents.message_content = True
 intents.presences = True
-bot = discord.Bot(intents=intents)
+bot = commands.Bot(intents=intents)
 
 #====================Slash commands====================
 
@@ -199,7 +198,7 @@ async def on_message(message: discord.Message):
             data[f"{usr_id}"] = 1
             client_collection.update_one({'_id':srv_id}, {"$inc": data}, upsert=True)
 
-msgcount = bot.create_group(name="msgcount", description="Command group for the message count feature")
+msgcount = discord.SlashCommandGroup(name="msgcount", description="Command group for the message count feature")
 #----------
 @msgcount.command(description = "What's the message count feature works and how to set it up")
 async def guide(ctx: discord.ApplicationContext):
@@ -275,6 +274,7 @@ async def confirm_deletion(ctx: discord.ApplicationContext, server_id: int):
 #=================================================================================================================================
 
 def main():
+    bot.add_application_command(msgcount)
     bot.run(TOKEN)
 
 if __name__ == '__main__':
