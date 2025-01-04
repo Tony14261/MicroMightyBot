@@ -52,7 +52,7 @@ If you are using render, add
 ```env
 PYTHON_VERSION = 3.11.10
 ```
-to specify the Python version you want
+as an environmet variable to specify the Python version you want
 
 ### 4. Modify the code:
 - Change the code to your style. Maybe add some features, improve the code, fix bugs,...
