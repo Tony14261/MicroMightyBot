@@ -8,7 +8,8 @@ import time
 
 import discord
 from discord.commands import option
-from discord.ext import commands
+
+#from discord.ext import commands
 from dotenv import load_dotenv
 
 from exceptions import InvalidMethod, UnknownError
@@ -108,7 +109,7 @@ intents = discord.Intents()
 intents.messages = True
 intents.message_content = True
 intents.presences = True
-bot = commands.Bot(intents=intents)
+bot = discord.Bot(intents=intents)
 
 #====================Slash commands====================
 
@@ -270,7 +271,7 @@ async def confirm_deletion(ctx: discord.ApplicationContext, server_id: int):
     else:
         await ctx.respond("You are not authorized to delete the data. If you have permission, try doing `/msgcount delete` in your server.")
 #===============================================
-
+bot.add_application_command(msgcount)
 #=================================================================================================================================
 
 def main():
