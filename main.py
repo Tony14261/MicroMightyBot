@@ -199,7 +199,7 @@ async def on_message(message: discord.Message):
             data[f"{usr_id}"] = 1
             client_collection.update_one({'_id':srv_id}, {"$inc": data}, upsert=True)
 
-msgcount = discord.SlashCommandGroup(name="msgcount", description="Command group for the message count feature")
+msgcount = bot.create_group(name="msgcount", description="Command group for the message count feature")
 #----------
 @msgcount.command(description = "What's the message count feature works and how to set it up")
 async def guide(ctx: discord.ApplicationContext):
@@ -271,7 +271,7 @@ async def confirm_deletion(ctx: discord.ApplicationContext, server_id: int):
     else:
         await ctx.respond("You are not authorized to delete the data. If you have permission, try doing `/msgcount delete` in your server.")
 #===============================================
-bot.add_application_command(msgcount)
+
 #=================================================================================================================================
 
 def main():
