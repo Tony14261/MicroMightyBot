@@ -109,10 +109,20 @@ intents = discord.Intents()
 intents.messages = True
 intents.message_content = True
 intents.presences = True
+intents.guilds = True
 bot = discord.Bot(intents=intents)
+#bot = commands.Bot(intents=intents)
 
 #====================Slash commands====================
-
+@bot.slash_command(description="Get help")
+async def help(ctx: discord.ApplicationContext):
+    await ctx.respond( "## MicroMightyBot help\n"
+                    "- `/msgcount` Features to track number of messages members sent\n"
+                    "   - You could do `/msgcount guide` to view its commands'n"
+                    "- `/roll_a_dice`: Rolls a dice (outputs a random number from 1-6)\n"
+                    "- `/roll_custom_dice`: Rolls a custom dice (outputs a random number from a custom range)\n"
+                    "- `/guess_the_number`: Guess the number from 1-10 (see if user's input is the same as the bot's random number)\n"
+                     )
 #=====Dicing=====
 dicing_random_responses = ["Look at that, it's [] !", " Ooh, it's []!", "Hmm.. Looks like you rolled []!", "Let's say.. []!", "Lemme see. It's []!", "Dicing.. []!", "Rolling, rolling, []!"]
 
@@ -170,7 +180,7 @@ async def on_ready():
                                 buttons=[{"label": "Open source", "url": "https://github.com/Tony14261/MicroMightyBot/"}, {"label": "Status", "url": "https://stats.uptimerobot.com/4CoTZy3oIe"}])
     await bot.change_presence(status=discord.Status.online,
                               activity=activity)
-    #await bot.register_command(staff_message_count, guild_ids=[1303613693707288617])
+    #await bot.register_command()
 
 @bot.event
 async def on_connect():
@@ -184,7 +194,6 @@ async def on_connect():
 
 #==========Optional Features==========
 #===Message Count===
-# I am working to make these features available for everyone
 staffs = [357638580530708480, 1254854714743455754, 1296457844140539954, 973091747418755092, 1307083823380693075]
 
 @bot.event
@@ -199,29 +208,39 @@ async def on_message(message: discord.Message):
             data[f"{usr_id}"] = 1
             client_collection.update_one({'_id':srv_id}, {"$inc": data}, upsert=True)
 
-msgcount = discord.SlashCommandGroup(name="msgcount", description="Command group for the message count feature")
+@bot.event
+async def on_guild_remove(guild: discord.Guild):
+    delete_data_one(server_id=str(guild.id), collection="message_count")
+    delete_data_one(server_id=str(guild.id), collection="config")
+    print(f"Bot was removed from {guild.name} (Guild ID: {str(guild.id)})")
+
+#msgcount = discord.SlashCommandGroup(name="msgcount", description="Command group for the message count feature")
+msgcount = bot.create_group("msgcount", "Command group for the message count feature")
 #----------
 @msgcount.command(description = "What's the message count feature works and how to set it up")
 async def guide(ctx: discord.ApplicationContext):
-    await ctx.respond("""## About the message count feature\n
-                    The message count feature is a feature that counts how many messages a user has sent in the server. It's a simple feature that can be useful for some servers.\n
-                    Because of the limited resources, you are limited to track maximum of 10 users. This feature will also be off by default and need configuration.\n
-                         ## How to set it up\n
-                    You could use the `/msgcount toggle` command to toggle the feature. The slash command requires inputs of users you want to track (10 maximum).\n
-                    The bot will start tracking then
-                         ## Commands:
-                      - `/msgcount toggle` - Toggle the message count feature, requires Administrator permission
-                      - `/msgcount get` - See how many messages members sent, requires Mention Everyone permission
-                      - `/msgcount delete` - Delete the message count data of your server, requires Administrator permission
-                      """)
+    await ctx.respond(  "## About the message count feature\n"
+                        "The message count feature is a feature that counts how many messages a user has sent in the server. It's a simple feature that can be useful for some servers.\n"
+                        "Because of the limited resources, you are limited to track maximum of 10 users. This feature will also be off by default and need configuration.\n"
+                        "## How to set it up\n"
+                        "You could use the `/msgcount toggle` command to toggle the feature. The slash command requires inputs of users you want to track (10 maximum).\n"
+                        "The bot will start tracking then\n"
+                        "## Commands:\n"
+                            "- `/msgcount config` - Configure the message count feature, requires Administrator permission\n"
+                                "- `/msgcount toggle` - Toggle the message count feature (off by default)\n"
+                            "- `/msgcount get` - See how many messages members sent, requires Mention Everyone permission\n"
+                            "- `/msgcount delete` - Delete the message count data of your server, requires Administrator permission\n"
+                      )
 #----------
-@msgcount.command(description = "Toggle the message count feature",
-                  contexts={discord.InteractionContextType.guild},)
+msgcount_config = msgcount.create_subgroup(name="config", description="Configure the message count feature", guild_only=True, default_member_permissions= discord.Permissions(administrator=True))
+@msgcount_config.command(description = "Configure the message count feature",
+                         contexts={discord.InteractionContextType.guild},)
 @discord.default_permissions(
-    administrator = True,
+    administrator = True
 )
-async def toggle(ctx: discord.ApplicationContext):
+async def config(ctx: discord.ApplicationContext):
     await ctx.respond("Command not available yet")
+
 #----------
 @msgcount.command(description = "See how many messages members sent",
                   contexts={discord.InteractionContextType.guild},)
@@ -270,12 +289,27 @@ async def confirm_deletion(ctx: discord.ApplicationContext, server_id: int):
         await ctx.respond("Data deleted")
     else:
         await ctx.respond("You are not authorized to delete the data. If you have permission, try doing `/msgcount delete` in your server.")
+#----------
+@msgcount.command(description = "Cancel the deletion of the message count data of your server",
+                  contexts={discord.InteractionContextType.bot_dm},
+)
+@discord.option(
+    "server_id",
+    description="The server ID",
+    required=True,
+)
+async def cancel_deletion(ctx: discord.ApplicationContext, server_id: int):
+    if str(ctx.author.id) == get_data(server_id=str(server_id), collection="message_count")["confirm"]:
+        update_db_one(server_id=str(server_id), collection="message_count", confirm = "0")
+        await ctx.respond("Deletion canceled")
+    else:
+        await ctx.respond("You are not authorized to cancel the deletion. If you have permission, try doing `/msgcount delete` in your server.")
 #===============================================
 
 #=================================================================================================================================
 
 def main():
-    bot.add_application_command(msgcount)
+    #bot.add_application_command(msgcount)
     bot.run(TOKEN)
 
 if __name__ == '__main__':

@@ -3,3 +3,5 @@ test.py
 test2.py
 /.vscode
 todo.md
+/cogs
+__pycache__

@@ -1,3 +1,4 @@
 python-dotenv
 py-cord
 pymongo
+audioop-lts;python_version>="3.13"

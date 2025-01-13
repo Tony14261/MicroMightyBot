@@ -3,7 +3,9 @@
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+from dotenv import load_dotenv
 
+load_dotenv()
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_HEAD(self):
         self.send_response(200)
