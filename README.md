@@ -9,12 +9,13 @@ Version: 1.3.0 \
 
 ## ✨ Features
 > Look in [changelog.md](https://github.com/Tony14261/MicroMightyBot/blob/main/changelog.md) to keep up with the latest
+- **/msgcount** Features to track number of messages members sent
+    - Now updated with many more features!
 - **/roll_a_dice**: Rolls a dice (outputs a random number from 1-6)
 - **/roll_custom_dice**: Rolls a custom dice (outputs a random number from a custom range)
 - **/guess_the_number**: Guess the number from 1-10 (see if user's input is the same as the bot's random number)
 
 ## ⭐ Upcoming Features
-- **/msgcount** Features to track number of messages members sent
 - **/help** Yes, it isn't made yet
 
 ## 📚 Programs Used 
@@ -75,7 +76,7 @@ MicroMightyBot/
 ```
 
 ## 🌟 Contributing
-Feel free to submit issues or suggest features. Contributions are always welcome!
+Feel free to submit issues or suggest features (in [Pull Request](https://github.com/Tony14261/MicroMightyBot/pulls)). Contributions are always welcome!
 
 ## 📜 License
 This project is licensed under the [CC-BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
