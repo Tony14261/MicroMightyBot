@@ -6,6 +6,11 @@
 **🚀 Pre-Release**: Preparing to make a release, needs testing and even more feedback \
 **⭐ Release**: The stable version, everything is working fine. It *could* contain bugs but it shouldn't
 
+# ⛏️ v1.3.10x-SNAPSHOTS | Snapshots
+- Fix many bugs
+- Make some small changes to match the pycord documentation
+- Test many upcoming features
+
 # 🚀 v1.3.9 | Pre-Release
 - Make a command group `msgcount` and make these features grouped to it:
     - `guide`, explain what is message count feature and how to set it up
@@ -37,6 +42,7 @@
 - New slash command: `/guess_the_number`, everything in the name and default guess range is 1-10
 
 # ⭐ v1.0.0 | Release
+*This is written after it's released, may contain misinformation*
 - Becomes a major version as everything is tested and working perfectly. This is the first release yay!. From now on, every feature needs to be tested before the release.
 - Bot renamed and redesigned to "MicroMightyBot"
 
@@ -46,6 +52,7 @@
 - Rename `/roll_dice_custom` to `/roll_custom_dice`
 
 # 🚀 v0.3.0 | Pre-Release
+*This is written after it's released, may contain misinformation*
 - Add basic setup for the bot
 - New slash command: `/roll`, this returns a random number from 1-6
 - New slash command: `/roll_custom`, this returns a random number from a custom range

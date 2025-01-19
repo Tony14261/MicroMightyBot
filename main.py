@@ -118,7 +118,7 @@ bot = discord.Bot(intents=intents)
 async def help(ctx: discord.ApplicationContext):
     await ctx.respond( "## MicroMightyBot help\n"
                     "- `/msgcount` Features to track number of messages members sent\n"
-                    "   - You could do `/msgcount guide` to view its commands'n"
+                    "   - You could do `/msgcount guide` to view its commands\n"
                     "- `/roll_a_dice`: Rolls a dice (outputs a random number from 1-6)\n"
                     "- `/roll_custom_dice`: Rolls a custom dice (outputs a random number from a custom range)\n"
                     "- `/guess_the_number`: Guess the number from 1-10 (see if user's input is the same as the bot's random number)\n"
@@ -221,13 +221,17 @@ msgcount = bot.create_group("msgcount", "Command group for the message count fea
 async def guide(ctx: discord.ApplicationContext):
     await ctx.respond(  "## About the message count feature\n"
                         "The message count feature is a feature that counts how many messages a user has sent in the server. It's a simple feature that can be useful for some servers.\n"
-                        "Because of the limited resources, you are limited to track maximum of 10 users. This feature will also be off by default and need configuration.\n"
+                        "You are limited to track maximum of 10 users. This feature will also be off by default and need configuration.\n"
                         "## How to set it up\n"
                         "You could use the `/msgcount toggle` command to toggle the feature. The slash command requires inputs of users you want to track (10 maximum).\n"
                         "The bot will start tracking then\n"
                         "## Commands:\n"
                             "- `/msgcount config` - Configure the message count feature, requires Administrator permission\n"
-                                "- `/msgcount toggle` - Toggle the message count feature (off by default)\n"
+                                "- `/msgcount config toggle` - Toggle the message count feature (off by default)\n"
+                                "- `/msgcount config view` - View the configuration of the message count feature\n"
+                                "- `/msgcount config add` - Add user(s) to track list\n"
+                                "- `/msgcount config write` - Rewrite the track list\n"
+                                "- `/msgcount config remove` - Remove user(s) from track list\n"
                             "- `/msgcount get` - See how many messages members sent, requires Mention Everyone permission\n"
                             "- `/msgcount delete` - Delete the message count data of your server, requires Administrator permission\n"
                       )
@@ -238,8 +242,61 @@ msgcount_config = msgcount.create_subgroup(name="config", description="Configure
 @discord.default_permissions(
     administrator = True
 )
-async def config(ctx: discord.ApplicationContext):
-    await ctx.respond("Command not available yet")
+async def toggle(ctx: discord.ApplicationContext):
+    if get_data(server_id=str(ctx.guild_id), collection="config") is None or get_data(server_id=str(ctx.guild_id), collection="config")["msgcount"]["toggle"] == "false":
+        update_db_one(server_id=str(ctx.guild_id), collection="config", bkeys="msgcount", toggle="true")
+        await ctx.respond("Message count feature is now on. Do `/msgcount config toggle` again to turn off.")
+    elif get_data(server_id=str(ctx.guild_id), collection="config")["msgcount"]["toggle"] == "true":
+        update_db_one(server_id=str(ctx.guild_id), collection="config", bkeys="msgcount", toggle="false")
+        await ctx.respond("Message count feature is now off. Do `/msgcount config toggle` again to turn on.")
+#
+@msgcount_config.command(description = "View the configuration of the message count feature",
+                         contexts={discord.InteractionContextType.guild},)
+@discord.default_permissions(
+    administrator = True,
+    mention_everyone = True,
+)
+async def view(ctx: discord.ApplicationContext):
+    output = f"Toggle: {get_data(server_id=str(ctx.guild_id), collection='config')['msgcount']['toggle']}\n"
+    output = ("Tracked users: ")
+    if get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"] is not None:
+        users = get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"]
+        for user in users:
+            output += f"<@{user}>, "
+        output = output[0:-2]
+    elif get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"] is None:
+        output += "`No users tracked`"
+#
+@msgcount_config.command(description = "Add user(s) to track list",
+                         contexts={discord.InteractionContextType.guild},)
+@discord.default_permissions(
+    administrator = True
+)
+async def add(ctx: discord.ApplicationContext, user: list[discord.User]):
+    users = get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"]
+    users += user
+    update_db_one(server_id=str(ctx.guild_id), collection="message_count", bkeys="msgcount.list", method="set", user_id=str(ctx.author.id), users=users)
+#
+@msgcount_config.command(description = "Rewrite the track list",
+                        contexts={discord.InteractionContextType.guild},)
+@discord.default_permissions(
+    administrator = True
+)
+async def write(ctx: discord.ApplicationContext, user: list[discord.User]):
+    update_db_one(server_id=str(ctx.guild_id), collection="message_count", bkeys="msgcount.list", method="set", user_id=str(ctx.author.id), users=user)
+#
+@msgcount_config.command(description = "Remove user(s) from track list",
+                         contexts={discord.InteractionContextType.guild},)
+@discord.default_permissions(
+    administrator = True
+)
+async def remove(ctx: discord.ApplicationContext, user: list[discord.User]):
+    users = get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"]
+    for u in user:
+        try:
+            users.remove(u)
+        except ValueError:
+            continue
 
 #----------
 @msgcount.command(description = "See how many messages members sent",
