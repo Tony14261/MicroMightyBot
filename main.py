@@ -226,14 +226,16 @@ async def guide(ctx: discord.ApplicationContext):
                         "You could use the `/msgcount toggle` command to toggle the feature. The slash command requires inputs of users you want to track (10 maximum).\n"
                         "The bot will start tracking then\n"
                         "## Commands:\n"
-                            "- `/msgcount config` - Configure the message count feature, requires Administrator permission\n"
-                                "- `/msgcount config toggle` - Toggle the message count feature (off by default)\n"
-                                "- `/msgcount config view` - View the configuration of the message count feature\n"
-                                "- `/msgcount config add` - Add user(s) to track list\n"
-                                "- `/msgcount config write` - Rewrite the track list\n"
-                                "- `/msgcount config remove` - Remove user(s) from track list\n"
-                            "- `/msgcount get` - See how many messages members sent, requires Mention Everyone permission\n"
-                            "- `/msgcount delete` - Delete the message count data of your server, requires Administrator permission\n"
+                        "    - `/msgcount config` - Configure the message count feature, requires Administrator permission\n"
+                        "        - `/msgcount config toggle` - Toggle the message count feature (off by default)\n"
+                        "        - `/msgcount config view` - View the configuration of the message count feature\n"
+                        "        - `/msgcount config add` - Add user to track list\n"
+                        "        - `/msgcount config write` - Rewrite the track list\n"
+                        "            - Takes an input of a list of user IDs separated by commas\n"
+                        "            - Example: `/msgcount config write 111111111111111111,222222222222222222,333333333333333333\n"
+                        "        - `/msgcount config remove` - Remove user from track list\n"
+                        "    - `/msgcount get` - See how many messages members sent, requires Mention Everyone permission\n"
+                        "    - `/msgcount delete` - Delete the message count data of your server, requires Administrator permission\n"
                       )
 #----------
 msgcount_config = msgcount.create_subgroup(name="config", description="Configure the message count feature", guild_only=True, default_member_permissions= discord.Permissions(administrator=True))
@@ -272,9 +274,14 @@ async def view(ctx: discord.ApplicationContext):
 @discord.default_permissions(
     administrator = True
 )
-async def add(ctx: discord.ApplicationContext, user: list[discord.User]):
+@option(
+    "user",
+    description="A user you want to add to the track list",
+    required=True,
+)
+async def add(ctx: discord.ApplicationContext, user: discord.User):
     users = get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"]
-    users += user
+    users.append(user)
     update_db_one(server_id=str(ctx.guild_id), collection="message_count", bkeys="msgcount.list", method="set", user_id=str(ctx.author.id), users=users)
 #
 @msgcount_config.command(description = "Rewrite the track list",
@@ -282,21 +289,31 @@ async def add(ctx: discord.ApplicationContext, user: list[discord.User]):
 @discord.default_permissions(
     administrator = True
 )
-async def write(ctx: discord.ApplicationContext, user: list[discord.User]):
-    update_db_one(server_id=str(ctx.guild_id), collection="message_count", bkeys="msgcount.list", method="set", user_id=str(ctx.author.id), users=user)
+@option(
+    "user",
+    description="A list of userIDs you want to add to the track list (example in guide)",
+    required=True,
+)
+async def write(ctx: discord.ApplicationContext, user: str):
+    users = user.split(",")
+    update_db_one(server_id=str(ctx.guild_id), collection="message_count", bkeys="msgcount", method="set", list=users)
 #
 @msgcount_config.command(description = "Remove user(s) from track list",
                          contexts={discord.InteractionContextType.guild},)
 @discord.default_permissions(
     administrator = True
 )
-async def remove(ctx: discord.ApplicationContext, user: list[discord.User]):
+@option(
+    "user",
+    description="A user you want to remove from the track list",
+    required=True,
+)
+async def remove(ctx: discord.ApplicationContext, user: discord.User):
     users = get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"]
-    for u in user:
-        try:
-            users.remove(u)
-        except ValueError:
-            continue
+    try:
+        users.remove(user)
+    except ValueError:
+        await ctx.respond("User not found in the list")
 
 #----------
 @msgcount.command(description = "See how many messages members sent",
