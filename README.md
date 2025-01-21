@@ -16,7 +16,7 @@ Version: 1.3.0 \
 - **/guess_the_number**: Guess the number from 1-10 (see if user's input is the same as the bot's random number)
 
 ## ⭐ Upcoming Features
-- **/help** Yes, it isn't made yet
+- None atm, I need ideas
 
 ## 📚 Programs Used 
 - **Language**: [Python 3.12+](https://www.python.org/)

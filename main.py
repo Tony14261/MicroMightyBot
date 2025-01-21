@@ -5,6 +5,7 @@ import os
 import random
 import threading
 import time
+from typing import Union
 
 import discord
 from discord.commands import option
@@ -229,10 +230,13 @@ async def guide(ctx: discord.ApplicationContext):
                         "    - `/msgcount config` - Configure the message count feature, requires Administrator permission\n"
                         "        - `/msgcount config toggle` - Toggle the message count feature (off by default)\n"
                         "        - `/msgcount config view` - View the configuration of the message count feature\n"
-                        "        - `/msgcount config add` - Add user to track list\n"
+                        "        - `/msgcount config add` - Add user(s) to track list\n"
+                        "            - Could take 2 values: String; Discord user\n"
+                        "            - Example of adding one user: `/msgcount config add @Tony14261`\n"
+                        "            - Example of adding multiple users: `/msgcount config add 111111111111111111,222222222222222222,333333333333333333`\n"
                         "        - `/msgcount config write` - Rewrite the track list\n"
                         "            - Takes an input of a list of user IDs separated by commas\n"
-                        "            - Example: `/msgcount config write 111111111111111111,222222222222222222,333333333333333333\n"
+                        "            - Example: `/msgcount config write 111111111111111111,222222222222222222,333333333333333333`\n"
                         "        - `/msgcount config remove` - Remove user from track list\n"
                         "    - `/msgcount get` - See how many messages members sent, requires Mention Everyone permission\n"
                         "    - `/msgcount delete` - Delete the message count data of your server, requires Administrator permission\n"
@@ -259,30 +263,38 @@ async def toggle(ctx: discord.ApplicationContext):
     mention_everyone = True,
 )
 async def view(ctx: discord.ApplicationContext):
-    output = f"Toggle: {get_data(server_id=str(ctx.guild_id), collection='config')['msgcount']['toggle']}\n"
-    output = ("Tracked users: ")
     if get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"] is not None:
+        output = f"Toggle: {get_data(server_id=str(ctx.guild_id), collection='config')['msgcount']['toggle']}\n"
+        output += ("Tracked users: ")
         users = get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"]
         for user in users:
             output += f"<@{user}>, "
         output = output[0:-2]
     elif get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"] is None:
-        output += "`No users tracked`"
+        output = "No user found"
+    await ctx.respond(output)
 #
 @msgcount_config.command(description = "Add user(s) to track list",
                          contexts={discord.InteractionContextType.guild},)
 @discord.default_permissions(
-    administrator = True
+    administrator = True,
 )
 @option(
     "user",
-    description="A user you want to add to the track list",
+    description="User(s) you want to add to the track list (example in guide)",
     required=True,
 )
-async def add(ctx: discord.ApplicationContext, user: discord.User):
+async def add(ctx: discord.ApplicationContext, user: Union[discord.User, str]):
     users = get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"]
-    users.append(user)
+    if users is None:
+        users = []
+    if type(user) is discord.User:
+        users.append(str(user.id))
+    elif type(user) is str:
+        user = str(user)
+        users += user.split(",")
     update_db_one(server_id=str(ctx.guild_id), collection="message_count", bkeys="msgcount.list", method="set", user_id=str(ctx.author.id), users=users)
+    await ctx.respond("Users added to the track list successfully")
 #
 @msgcount_config.command(description = "Rewrite the track list",
                         contexts={discord.InteractionContextType.guild},)
@@ -297,6 +309,7 @@ async def add(ctx: discord.ApplicationContext, user: discord.User):
 async def write(ctx: discord.ApplicationContext, user: str):
     users = user.split(",")
     update_db_one(server_id=str(ctx.guild_id), collection="message_count", bkeys="msgcount", method="set", list=users)
+    await ctx.respond("List rewritten successfully")
 #
 @msgcount_config.command(description = "Remove user(s) from track list",
                          contexts={discord.InteractionContextType.guild},)
@@ -312,8 +325,11 @@ async def remove(ctx: discord.ApplicationContext, user: discord.User):
     users = get_data(server_id=str(ctx.guild_id), collection="message_count")["msgcount"]["list"]
     try:
         users.remove(user)
+        update_db_one(server_id=str(ctx.guild_id), collection="message_count", bkeys="msgcount", method="set", list=users)
     except ValueError:
         await ctx.respond("User not found in the list")
+    else:
+        await ctx.respond("User removed from the track list successfully")
 
 #----------
 @msgcount.command(description = "See how many messages members sent",
