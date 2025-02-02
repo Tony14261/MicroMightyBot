@@ -16,7 +16,9 @@ Version: 1.3.0 \
 - **/guess_the_number**: Guess the number from 1-10 (see if user's input is the same as the bot's random number)
 
 ## ⭐ Upcoming Features
-- None atm, I need ideas
+- Enhance the verify system
+- Use embeds or attachments instead of plain message
+- Feature to close or open the server
 
 ## 📚 Programs Used 
 - **Language**: [Python 3.12+](https://www.python.org/)
@@ -83,4 +85,4 @@ This project is licensed under the [CC-BY-NC-SA License](https://creativecommons
 
 ## 📞 Contact
 Discord server: [Invite link](https://discord.gg/bJ8PaFREj2) \
-If you encounter any issues or want to suggest a feature, feel free to message me. (Please don't use Github Issues page as I don't monitor it.)
+If you encounter any issues or want to suggest a feature, feel free to report or contact me.
