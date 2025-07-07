@@ -78,7 +78,7 @@ MicroMightyBot/
 ```
 
 ## 🌟 Contributing
-Feel free to submit issues or suggest features (in [Pull Request](https://github.com/Tony14261/MicroMightyBot/pulls)). Contributions are always welcome!
+Feel free to submit issues (in [Issues](https://github.com/Tony14261/MicroMightyBot/issues)) or suggest features (in [Pull Request](https://github.com/Tony14261/MicroMightyBot/pulls)). Contributions are always welcome!
 
 ## 📜 License
 This project is licensed under the [CC-BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
