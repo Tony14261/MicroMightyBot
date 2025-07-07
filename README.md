@@ -1,4 +1,4 @@
-# MicroMightyBot
+# MicroMightyBot (down indefinitely, I have no plans to revive this project at the moment)
 
 MicroMightyBot is a lightweight Discord bot packed with small, kinda-useless features designed to make your server more entertaining and productive.
 
